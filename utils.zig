@@ -27,11 +27,14 @@ test "root" {
 
 /// Run shell command
 pub fn exec(allocator: std.mem.Allocator, cwd: []const u8, argv: []const []const u8, opts: Options) !void {
-    var child = try std.ChildProcess.init(argv, allocator);
+    var child = std.process.Child.init(argv, allocator);
     child.cwd = cwd;
-    if (opts.enable_stdout) child.stdout = std.io.getStdOut() else child.stdout = null;
-    if (opts.enable_stderr) child.stderr = std.io.getStdErr() else child.stderr = null;
-    _ = try child.spawnAndWait();
+    // Comportement des flux selon options
+    child.stdin_behavior = .Ignore;
+    child.stdout_behavior = if (opts.enable_stdout) .Inherit else .Ignore;
+    child.stderr_behavior = if (opts.enable_stderr) .Inherit else .Ignore;
+    try child.spawn();
+    _ = try child.wait();
 }
 
 /// Ensure repository exists, if not clone it with git. cwd is absolute path
