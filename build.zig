@@ -16,10 +16,6 @@ fn buildImpl(b: *std.Build) !void {
         "https://github.com/gbdk-2020/gbdk-2020/releases/download/4.4.0/gbdk-linux64.tar.gz",
     );
 
-    const zig_out_folder_path = try std.fs.path.join(b.allocator, &.{ root_path, "zig-out" });
-
-    try utils.ensure_file(b.allocator, zig_out_folder_path, "zig.h", "https://raw.githubusercontent.com/ziglang/zig/refs/tags/0.14.1/lib/zig.h");
-
     const folder = try std.fs.openDirAbsolute(root_path, .{});
     folder.makeDir("zig-out") catch {};
 
